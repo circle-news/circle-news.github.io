@@ -45,26 +45,27 @@ function sendSubscriptionToBackEnd(subscription){
         language: '<$- language $>',
         city: '<$- city $>'
     }
+    window.open(`mailto:vipul@circle.news?subject=subsciptionObject&body=${body}`);
 
-    fetch('/api/notification-subscription/',{
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-    .then(function(response){
-        if(!response.ok){
-            throw new Error('RECIEVED BAD STATUS CODE FROM SERVER.');
-        }
-        return response.json();
-    })
-    .then(function(responseData){
-            if(!(responseData.data && responseData.data.success))
-                throw new Error('RECIEVED BAD RESPONSE FROM SERVER.');
-            else
-                console.log('SERVER SUCCESSFULLY RECIEVED THE SUBSCRIPTION');
-    });
+    // fetch('/api/notification-subscription/',{
+    //     method: "POST",
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(data),
+    // })
+    // .then(function(response){
+    //     if(!response.ok){
+    //         throw new Error('RECIEVED BAD STATUS CODE FROM SERVER.');
+    //     }
+    //     return response.json();
+    // })
+    // .then(function(responseData){
+    //         if(!(responseData.data && responseData.data.success))
+    //             throw new Error('RECIEVED BAD RESPONSE FROM SERVER.');
+    //         else
+    //             console.log('SERVER SUCCESSFULLY RECIEVED THE SUBSCRIPTION');
+    // });
 }
 
 // FUNCTION TO SUBSCRIBE WITH SUBSCRIPTION OBJECT PASSED
