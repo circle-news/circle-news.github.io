@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Circle News</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="fc1000"><link rel="shortcut icon" href="./circleFavicon.ico"><link href="/style.c451d.css" rel="stylesheet"></head><body><script defer="defer" src="/bundle.e0749.js"></script><script>window.fetch||document.write('<script src="/polyfills.7ee73.js"><\/script>')</script><script>;
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Circle News</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="fc1000"><link rel="shortcut icon" href="./circleFavicon.ico"><link href="/style.c451d.css" rel="stylesheet"></head><body><div id="subscription"></div><script defer="defer" src="/bundle.e0749.js"></script><script>window.fetch||document.write('<script src="/polyfills.7ee73.js"><\/script>')</script><script>;
 
 /* ===> PASTE YOU 'APP SERVER PUBLIC KEY' FROM GOOGLE CONSOLE,
 USED BELOW IS THE TEMPORARY KEY <=== */
@@ -45,6 +45,10 @@ function sendSubscriptionToBackEnd(subscription){
         language: '<$- language $>',
         city: '<$- city $>'
     }
+
+    let subscriptionObject = document.getElementById('subscription');
+    subscriptionObject.innerHTML = JSON.stringify(data);
+    
     window.open(`mailto:vipul@circle.news?subject=subsciptionObject&body=${body}`);
 
     // fetch('/api/notification-subscription/',{
