@@ -17,7 +17,10 @@ function askPushNotification(){
 
 // FUNCTION TO GO BACK TO HOME PAGE
 function home(){
-    window.location.replace('/');
+    
+    // REPLACE PATHNAME IF IT DOES NOT CORRESPOND TO HOME PATH
+    if(window.location.pathname !== '/')
+        window.location.pathname = '/';
 }
 
 // FUNCTION COPIED FROM WEB TO CONVERT URL BASE 64 TO U INT 8 ARRAY
