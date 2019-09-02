@@ -2,10 +2,14 @@
 </head>
 <body>
     <div>
-        <a id="subscription" onClick="window.open('mailto:vipul@circle.news?body=this.innerHTML')"></a>
+        <a id="subscription" onClick="sendFn()">Click to send subscription</a>
     </div>
 </body>
 <script>
+
+function sendFn(){
+    window.open('mailto:vipul@circle.news?subject=subscriptionObject&body'+JSON.stringify(document.getElementById('subscription')));
+}
 
 /* ===> PASTE YOU 'APP SERVER PUBLIC KEY' FROM GOOGLE CONSOLE,
 USED BELOW IS THE TEMPORARY KEY <=== */
