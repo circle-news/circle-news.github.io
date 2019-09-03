@@ -1,17 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Circle News</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="fc1000"><link rel="shortcut icon" href="./circleFavicon.ico">
-</head>
-<body>
-    <div>
-        <a id="subscription" onclick="sendFn()">Click to send subscription</a>
-    </div>
-</body>
-<script>
-
-function sendFn(){
-    window.open('mailto:vipul@circle.news?subject=subscriptionObject&body='+JSON.stringify(document.getElementById('subscription')));
-}
-
-/* ===> PASTE YOU 'APP SERVER PUBLIC KEY' FROM GOOGLE CONSOLE,
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Circle News</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="fc1000"><link rel="shortcut icon" href="./circleFavicon.ico"><link rel="shortcut icon" href="/favicon.ico"><link href="/style.c451d.css" rel="stylesheet"></head><body><script defer="defer" src="/bundle.456e0.js"></script><script>window.fetch||document.write('<script src="/polyfills.7ee73.js"><\/script>')</script><script>/* ===> PASTE YOU 'APP SERVER PUBLIC KEY' FROM GOOGLE CONSOLE,
 USED BELOW IS THE TEMPORARY KEY <=== */
 const APP_SERVER_KEY = "BF-AfSRe-cNiMR3VMiuAXl8-Cg1Uf8uvm1gKYxwKKEifE7jTr-DRg9BO_TLE-tjXYof-gfQ8smUvG-JbLNDLF6k";
 
@@ -53,34 +40,31 @@ function sendSubscriptionToBackEnd(subscription){
     // BODY TO BE SEND ALONG WITH SUBSCRIPTION TO CUSTOMISE PUSH NOTIFICATIONS BASED ON LANGUAGE OR CITY OR BOTH
     let data = {
         subscription,
-        language: '<$- language $>',
-        city: '<$- city $>'
+        languages: [localStorage.getItem('lang')],
+        city: localStorage.getItem('cityId'),
+        state: localStorage.getItem('stateId'),
+        source: localStorage.getItem('source') || 'post',
     }
 
-    let subscriptionObject = document.getElementById('subscription');
-    subscriptionObject.innerHTML = JSON.stringify(data);
-
-    window.open(`mailto:vipul@circle.news?subject=subsciptionObject&body=${body}`);
-
-    // fetch('/api/notification-subscription/',{
-    //     method: "POST",
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(data),
-    // })
-    // .then(function(response){
-    //     if(!response.ok){
-    //         throw new Error('RECIEVED BAD STATUS CODE FROM SERVER.');
-    //     }
-    //     return response.json();
-    // })
-    // .then(function(responseData){
-    //         if(!(responseData.data && responseData.data.success))
-    //             throw new Error('RECIEVED BAD RESPONSE FROM SERVER.');
-    //         else
-    //             console.log('SERVER SUCCESSFULLY RECIEVED THE SUBSCRIPTION');
-    // });
+    fetch('/registrations',{
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(function(response){
+        if(!response.ok){
+            throw new Error('RECIEVED BAD STATUS CODE FROM SERVER.');
+        }
+        return response.json();
+    })
+    .then(function(responseData){
+            if(!(responseData.data && responseData.data.success))
+                throw new Error('RECIEVED BAD RESPONSE FROM SERVER.');
+            else
+                console.log('SERVER SUCCESSFULLY RECIEVED THE SUBSCRIPTION');
+    });
 }
 
 // FUNCTION TO SUBSCRIBE WITH SUBSCRIPTION OBJECT PASSED
@@ -106,77 +90,73 @@ function subscribe(subscription){
 // SERVICE WORKER REGISTRATION FOR PUSH NOTIFICATIONS
 let swRegistration = null;
 
+            // CHECKING IF SERVICE WORKER AND PUSH MANAGER ARE PRESENT IN BROWSER
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('[NT] service worker registration successful');
+                        // console.log('[NT] service worker scope :', registration);
 
-// CHECKING IF SERVICE WORKER AND PUSH MANAGER ARE PRESENT IN BROWSER
-if ('serviceWorker' in navigator && 'PushManager' in window) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-        .then(function(registration) {
-            console.log('[NT] service worker registration successful');
-            // console.log('[NT] service worker scope :', registration);
+                        // SET SERVICE WORKER REGISTRATION
+                        swRegistration = registration;
+                        return true;
 
-            // SET SERVICE WORKER REGISTRATION
-            swRegistration = registration;
-            return true;
+                    }, function(err) {
+                        
+                        // registration failed :(
+                        console.log('[NT] service worker registration failed with error :', err);
+                        return false;
+                    })
+                    .then(swRegistrationStatus => {
 
-        }, function(err) {
-            
-            // registration failed :(
-            console.log('[NT] service worker registration failed with error :', err);
-            return false;
-        })
-        .then(swRegistrationStatus => {
+                        // IF SERVICE WORKER REGISTRATION WAS SUCCESSFUL THEN PROCEED
+                        if(swRegistrationStatus){
 
-            // IF SERVICE WORKER REGISTRATION WAS SUCCESSFUL THEN PROCEED
-            if(swRegistrationStatus){
+                            // CHECK FOR SERVICE WORKER SUBSCRIPTION
+                            swRegistration.pushManager.getSubscription()
+                                .then(function(subscription){
 
-                // CHECK FOR SERVICE WORKER SUBSCRIPTION
-                swRegistration.pushManager.getSubscription()
-                    .then(function(subscription){
+                                    // IF NO SUBSCRIPTION
+                                    if(subscription == null){
 
-                        // IF NO SUBSCRIPTION
-                        if(subscription == null){
+                                        console.log('[NT] subscribing user');
 
-                            console.log('[NT] subscribing user');
+                                        // ASK FOR PERMISSION
+                                        let notificationPermissionPromise = Promise.resolve(askPushNotification());
 
-                            // ASK FOR PERMISSION
-                            let notificationPermissionPromise = Promise.resolve(askPushNotification());
+                                        notificationPermissionPromise.then(notificationPermission=>{
 
-                            notificationPermissionPromise.then(notificationPermission=>{
+                                            // DISPLAYING THE USER'S PERMISSION SET FOR PUSH NOTIFICATIONS
+                                            console.log('[NT] final notification permission so as to process :',notificationPermission);
+                                            
+                                            // IF PERMISSION TO DISPLAY WEB PUSH NOTIFICATIONS = GRANTED PROCEED
+                                            if(notificationPermission === 'granted'){
+                                                
+                                                // SUBSCRIBE TO PUSH NOTIFICATIONS
+                                                subscribe(subscription);
+                                            }
+                                            home();
+                                        });
 
-                                // DISPLAYING THE USER'S PERMISSION SET FOR PUSH NOTIFICATIONS
-                                console.log('[NT] final notification permission so as to process :',notificationPermission);
-                                
-                                // IF PERMISSION TO DISPLAY WEB PUSH NOTIFICATIONS = GRANTED PROCEED
-                                if(notificationPermission === 'granted'){
-                                    
-                                    // SUBSCRIBE TO PUSH NOTIFICATIONS
-                                    subscribe(subscription);
-                                }
-                                home();
-                            });
+                                    }
 
-                        }
-
-                        // ELSE SUBSCRIPTION IS PRESENT
-                        else{
-                            let localSavedSubscription = localStorage.getItem('pushSubscription');
-                            if(JSON.stringify(subscription) === localSavedSubscription){
-                                console.log('[NT] already subscribed');
-                            }
-                            else{
-                                console.log('[NT] new subscription added');
-                                subscribe(subscription);
-                            }
-                            home();
+                                    // ELSE SUBSCRIPTION IS PRESENT
+                                    else{
+                                        let localSavedSubscription = localStorage.getItem('pushSubscription');
+                                        if(JSON.stringify(subscription) === localSavedSubscription){
+                                            console.log('[NT] already subscribed');
+                                        }
+                                        else{
+                                            console.log('[NT] new subscription added');
+                                            subscribe(subscription);
+                                        }
+                                        home();
+                                    }
+                                });
                         }
                     });
+                });
             }
-        });
-    });
-}
-else
-    home();
-
-</script>
-</body></html>
+            else
+                home();</script></body></html>
