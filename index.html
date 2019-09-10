@@ -1,162 +1,39 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Circle News</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="fc1000"><link rel="shortcut icon" href="./circleFavicon.ico"><link rel="shortcut icon" href="/favicon.ico"><link href="/style.c451d.css" rel="stylesheet"></head><body><script defer="defer" src="/bundle.456e0.js"></script><script>window.fetch||document.write('<script src="/polyfills.7ee73.js"><\/script>')</script><script>/* ===> PASTE YOU 'APP SERVER PUBLIC KEY' FROM GOOGLE CONSOLE,
-USED BELOW IS THE TEMPORARY KEY <=== */
-const APP_SERVER_KEY = "BF-AfSRe-cNiMR3VMiuAXl8-Cg1Uf8uvm1gKYxwKKEifE7jTr-DRg9BO_TLE-tjXYof-gfQ8smUvG-JbLNDLF6k";
 
-// NOTIFICATION REQUEST
-function askPushNotification(){
-
-    // ASK FOR NEW VALUE FROM THE USER IF NOT ASKED YET OR PERMISSION WAS NEITHER DENIED NOR GRANTED I.E. DEFAULT
-        return Notification.requestPermission().then(function(response){
-                    console.log('[NT] notification permission response :', response);
-                    // localStorage.setItem('notification',response);
-                    return response;
-                });
-}
-
-// FUNCTION TO GO BACK TO HOME PAGE
-function home(){
-    
-    // REPLACE PATHNAME IF IT DOES NOT CORRESPOND TO HOME PATH
-    if(window.location.pathname !== '/')
-        window.location.pathname = '/';
-}
-
-// FUNCTION COPIED FROM WEB TO CONVERT URL BASE 64 TO U INT 8 ARRAY
-function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding)
-        .replace(/\-/g, '+')
-        .replace(/_/g, '/')
-    ;
-    const rawData = window.atob(base64);
-    return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
-}
-
-
-// FUNCTION TO SEND SUBSCRIPTION TO THE BACKEND
-function sendSubscriptionToBackEnd(subscription){
-    let obj = JSON.stringify(subscription);
-
-    // BODY TO BE SEND ALONG WITH SUBSCRIPTION TO CUSTOMISE PUSH NOTIFICATIONS BASED ON LANGUAGE OR CITY OR BOTH
-    let data = {
-        subscription,
-        languages: [localStorage.getItem('lang')],
-        city: localStorage.getItem('cityId'),
-        state: localStorage.getItem('stateId'),
-        source: localStorage.getItem('source') || 'post',
-    }
-
-    fetch('/registrations',{
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-    .then(function(response){
-        if(!response.ok){
-            throw new Error('RECIEVED BAD STATUS CODE FROM SERVER.');
-        }
-        return response.json();
-    })
-    .then(function(responseData){
-            if(!(responseData.data && responseData.data.success))
-                throw new Error('RECIEVED BAD RESPONSE FROM SERVER.');
-            else
-                console.log('SERVER SUCCESSFULLY RECIEVED THE SUBSCRIPTION');
-    });
-}
-
-// FUNCTION TO SUBSCRIBE WITH SUBSCRIPTION OBJECT PASSED
-function subscribe(subscription){
-
-    // ARGUMENT OBJECT FOR SUBSCRIBING
-    const subscribeOptions = {
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(APP_SERVER_KEY)
-    }
-    
-    // SUBSCRIBE TO PUSH NOTIFICATIONS USING ABOVE CREATED ARGUMENT
-    swRegistration.pushManager.subscribe(subscribeOptions)
-        .then(function(subscription){
-
-            // STORE SUBSCRIPTION FOR LATER REFERENCE
-            localStorage.setItem('pushSubscription',JSON.stringify(subscription));
-            let storedSubscription = JSON.parse(localStorage.getItem('pushSubscription'));
-            sendSubscriptionToBackEnd(subscription);
-        });
-}
-
-// SERVICE WORKER REGISTRATION FOR PUSH NOTIFICATIONS
-let swRegistration = null;
-
-            // CHECKING IF SERVICE WORKER AND PUSH MANAGER ARE PRESENT IN BROWSER
-            if ('serviceWorker' in navigator && 'PushManager' in window) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                        console.log('[NT] service worker registration successful');
-                        // console.log('[NT] service worker scope :', registration);
-
-                        // SET SERVICE WORKER REGISTRATION
-                        swRegistration = registration;
-                        return true;
-
-                    }, function(err) {
-                        
-                        // registration failed :(
-                        console.log('[NT] service worker registration failed with error :', err);
-                        return false;
-                    })
-                    .then(swRegistrationStatus => {
-
-                        // IF SERVICE WORKER REGISTRATION WAS SUCCESSFUL THEN PROCEED
-                        if(swRegistrationStatus){
-
-                            // CHECK FOR SERVICE WORKER SUBSCRIPTION
-                            swRegistration.pushManager.getSubscription()
-                                .then(function(subscription){
-
-                                    // IF NO SUBSCRIPTION
-                                    if(subscription == null){
-
-                                        console.log('[NT] subscribing user');
-
-                                        // ASK FOR PERMISSION
-                                        let notificationPermissionPromise = Promise.resolve(askPushNotification());
-
-                                        notificationPermissionPromise.then(notificationPermission=>{
-
-                                            // DISPLAYING THE USER'S PERMISSION SET FOR PUSH NOTIFICATIONS
-                                            console.log('[NT] final notification permission so as to process :',notificationPermission);
-                                            
-                                            // IF PERMISSION TO DISPLAY WEB PUSH NOTIFICATIONS = GRANTED PROCEED
-                                            if(notificationPermission === 'granted'){
-                                                
-                                                // SUBSCRIBE TO PUSH NOTIFICATIONS
-                                                subscribe(subscription);
-                                            }
-                                            home();
-                                        });
-
-                                    }
-
-                                    // ELSE SUBSCRIPTION IS PRESENT
-                                    else{
-                                        let localSavedSubscription = localStorage.getItem('pushSubscription');
-                                        if(JSON.stringify(subscription) === localSavedSubscription){
-                                            console.log('[NT] already subscribed');
-                                        }
-                                        else{
-                                            console.log('[NT] new subscription added');
-                                            subscribe(subscription);
-                                        }
-                                        home();
-                                    }
-                                });
-                        }
-                    });
-                });
-            }
-            else
-                home();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            Aligarh News: चाकू से गोदकर हुई महिला की हत्या
+        </title>
+        <meta name="description" content="Aligarh News: अलीगढ के क्वार्सी क्षेत्र के रामघाट रोड स्थित राज एनक्लेव कोलोनी में दिनदहाड़े एक महिला की चाकू से गोदकर हत्या कर दी गयी। परिजनों की सूचना के बाद पुलिस और फॉरेंसिक टीम मौके पर पहुँच गयी है। बताया जा रह...">
+        <meta name="keywords"
+            content=", Aligarh, Aligarh news in hindi, Latest Aligarh news, Aligarh headlines, Aligarh samachar, अलीगढ़, अलीगढ़ समाचार, uttar_pradesh, उत्तर प्रदेश, News in hindi, Hindi news, Hindi samachar, समाचार,  kuarsi, कुआरसी, Local news, Today news, Breaking news">
+        <meta name="news_keywords"
+            content="Aligarh,Aligarh news in hindi,Latest Aligarh news,Aligarh headlines,Aligarh samachar,अलीगढ़,अलीगढ़ समाचार,uttar_pradesh,उत्तर प्रदेश,News in hindi,Hindi news,Hindi samachar,समाचार,kuarsi,कुआरसी,Today news,Breaking news">
+        <meta charset="utf-8">
+        <meta name="viewport"
+            content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
+        <link rel="canonical" href="https://circle.page/post/1267019">
+        <link rel="amphtml" href="https://circle.page/post/1267019"/>
+        <meta property="og:site_name" content="सर्कल">
+        <meta property="og:type" content="article">
+        <meta property="og:title" content="Aligarh News: चाकू से गोदकर हुई महिला की हत्या">
+        <meta property="og:url" content="https://circle.page/post/1267019">
+        <meta property="og:image" content="https://dhczax65kqbx1.cloudfront.net/unsafe/600x/filters:format(webp)/https://s3.ap-south-1.amazonaws.com/circlecontent/posts_241cd0ea-e1da-47bd-ba8e-956b73d7381f.jpg">
+        <meta property="og:description"
+            content="Aligarh News: अलीगढ के क्वार्सी क्षेत्र के रामघाट रोड स्थित राज एनक्लेव कोलोनी में दिनदहाड़े एक महिला की चाकू से गोदकर हत्या कर दी गयी। परिजनों की सूचना के बाद पुलिस और फॉरेंसिक टीम मौके पर पहुँच गयी है। बताया जा रह...">
+        <meta property="article:tag" content="uttar_pradesh">
+        <meta property="article:tag" content="kuarsi">
+        <meta property="article:section" content="Aligarh News">
+        <meta property="fb:app_id" content="1950057805033895">
+        <meta property="fb:pages" content="271576046747557">
+        <meta property="al:ios:url" content="https://circle.page/post/1267019" />
+        <meta property="al:android:url" content="https://circle.page/post/1267019" />
+        <meta property="al:android:app_name" content="Circle: Local News & Videos" />
+        <meta property="al:android:package" content="news.circle.circle" />
+</head>
+<body>
+<!-- <script defer="defer" src="/bundle.e2e21.js"></script>
+<script>window.fetch||document.write('<script src="/polyfills.7ee73.js"><\/script>')</script> -->
+</body>
+</html>
