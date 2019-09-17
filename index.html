@@ -1,39 +1,138 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Circle News</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#ff0000"><link rel="shortcut icon" href="./circleFavicon.ico"><link rel="shortcut icon" href="/favicon.ico"><link href="/style.722c1.css" rel="stylesheet"></head><body><script defer="defer" src="/bundle.44d11.js"></script><script>window.fetch||document.write('<script src="/polyfills.7ee73.js"><\/script>')</script><script>window.onload = function(){
+				js = document.createElement("script");
+					js.src = "https://www.googletagmanager.com/gtag/js?id=UA-120799503-1";
+						window.dataLayer = window.dataLayer || [];
+						window.gtag = function () { dataLayer.push(arguments); };
+						gtag('js', new Date());
+						gtag('config', 'UA-120799503-3');
+                document.body.appendChild(js);};</script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	
+	ga('create', 'UA-XXXXX-Y', 'auto');</script><script>const APP_SERVER_KEY = "BF-AfSRe-cNiMR3VMiuAXl8-Cg1Uf8uvm1gKYxwKKEifE7jTr-DRg9BO_TLE-tjXYof-gfQ8smUvG-JbLNDLF6k";
+    
+	// CHECKING IF SERVICE WORKER AND PUSH MANAGER SUPPORT IS PRESENT IN THE BROWSER
+	if ('serviceWorker' in navigator && 'PushManager' in window) {
+		window.addEventListener('load', function() {
+	
+			navigator.serviceWorker.register('/sw.js')      // service worker file
+			.then(function(swRegistration){
+				console.log('[INSTALL SUCCESS]');
+				
+				swRegistration.pushManager.getSubscription()    // 'null' or <some object> returned
+				.then(function(swSubscription){
+					if(!swSubscription){   // subscription does not exist
+						console.log("subscription object does not exist");
+						// REMOVE OLD SUBSCRIPTION STATUS IF SUBSCRIPTION OBJECT DOES NOT EXIST
+						localStorage.removeItem('subscriptionStatus');
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>
-            Aligarh News: चाकू से गोदकर हुई महिला की हत्या
-        </title>
-        <meta name="description" content="Aligarh News: अलीगढ के क्वार्सी क्षेत्र के रामघाट रोड स्थित राज एनक्लेव कोलोनी में दिनदहाड़े एक महिला की चाकू से गोदकर हत्या कर दी गयी। परिजनों की सूचना के बाद पुलिस और फॉरेंसिक टीम मौके पर पहुँच गयी है। बताया जा रह...">
-        <meta name="keywords"
-            content=", Aligarh, Aligarh news in hindi, Latest Aligarh news, Aligarh headlines, Aligarh samachar, अलीगढ़, अलीगढ़ समाचार, uttar_pradesh, उत्तर प्रदेश, News in hindi, Hindi news, Hindi samachar, समाचार,  kuarsi, कुआरसी, Local news, Today news, Breaking news">
-        <meta name="news_keywords"
-            content="Aligarh,Aligarh news in hindi,Latest Aligarh news,Aligarh headlines,Aligarh samachar,अलीगढ़,अलीगढ़ समाचार,uttar_pradesh,उत्तर प्रदेश,News in hindi,Hindi news,Hindi samachar,समाचार,kuarsi,कुआरसी,Today news,Breaking news">
-        <meta charset="utf-8">
-        <meta name="viewport"
-            content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
-        <link rel="canonical" href="https://circle.page/post/1267019">
-        <link rel="amphtml" href="https://circle.page/post/1267019"/>
-        <meta property="og:site_name" content="सर्कल">
-        <meta property="og:type" content="article">
-        <meta property="og:title" content="Aligarh News: चाकू से गोदकर हुई महिला की हत्या">
-        <meta property="og:url" content="https://circle.page/post/1267019">
-        <meta property="og:image" content="https://dhczax65kqbx1.cloudfront.net/unsafe/600x/filters:format(webp)/https://s3.ap-south-1.amazonaws.com/circlecontent/posts_241cd0ea-e1da-47bd-ba8e-956b73d7381f.jpg">
-        <meta property="og:description"
-            content="Aligarh News: अलीगढ के क्वार्सी क्षेत्र के रामघाट रोड स्थित राज एनक्लेव कोलोनी में दिनदहाड़े एक महिला की चाकू से गोदकर हत्या कर दी गयी। परिजनों की सूचना के बाद पुलिस और फॉरेंसिक टीम मौके पर पहुँच गयी है। बताया जा रह...">
-        <meta property="article:tag" content="uttar_pradesh">
-        <meta property="article:tag" content="kuarsi">
-        <meta property="article:section" content="Aligarh News">
-        <meta property="fb:app_id" content="1950057805033895">
-        <meta property="fb:pages" content="271576046747557">
-        <meta property="al:ios:url" content="https://circle.page/post/1267019" />
-        <meta property="al:android:url" content="https://circle.page/post/1267019" />
-        <meta property="al:android:app_name" content="Circle: Local News & Videos" />
-        <meta property="al:android:package" content="news.circle.circle" />
-</head>
-<body>
-<!-- <script defer="defer" src="/bundle.e2e21.js"></script>
-<script>window.fetch||document.write('<script src="/polyfills.7ee73.js"><\/script>')</script> -->
-</body>
-</html>
+						Notification.requestPermission()
+						.then(function(response){   // response -> 'granted', 'denied' or 'default'
+							if(response === 'granted'){
+								function urlBase64ToUint8Array(base64String) {
+									const padding = '='.repeat((4 - base64String.length % 4) % 4);
+									const base64 = (base64String + padding)
+										.replace(/\-/g, '+')
+										.replace(/_/g, '/');
+									const rawData = window.atob(base64);
+									return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+								}
+	
+								let subscribeOptions = {
+									userVisibleOnly: true,
+									applicationServerKey: urlBase64ToUint8Array(APP_SERVER_KEY)
+								}
+								
+								swRegistration.pushManager.subscribe(subscribeOptions)
+								.then(function(subscriptionObject){
+	
+									localStorage.setItem('subscriptionObject', JSON.stringify(subscriptionObject));
+									localStorage.removeItem('subscriptionIntervalId');
+	
+									let id = setInterval(function(){
+										console.log('executing interval');
+										let subscriptionIntervalId = Number(localStorage.getItem('subscriptionIntervalId'));
+										if(subscriptionIntervalId){
+											let stateName = localStorage.getItem('stateName');
+											let subscriptionObjectJSON = localStorage.getItem('subscriptionObject');
+											let cityName = localStorage.getItem('cityName');
+											let subscriptionObject = null;
+											if(subscriptionObjectJSON && stateName){
+												subscriptionObject = JSON.parse(subscriptionObjectJSON);
+				
+												function sendSubscriptionToBackEnd(){
+													// BODY TO BE SEND ALONG WITH SUBSCRIPTION TO CUSTOMISE PUSH NOTIFICATIONS BASED ON LANGUAGE OR CITY OR BOTH
+													let data = {
+														subscription: subscriptionObject,
+														languages: localStorage.getItem('lang'),
+														state: stateName,
+														city: cityName,
+													}
+				
+													const accessToken = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Yzc5NTgxMGRmYWNlYzVlZGE4MDkzNzciLCJudW1iZXIiOjM1NzA1MDYsImlhdCI6MTU1MTQ1NjI3Mn0.UVhdkBij6tH8GaHeYMAGBE760p4D5pREtr9KG-H5YKWuvp4Z5aWWn-U2wZQv_eLRGdRawSFsNy1yccsrfeF_KZfpGI9WSQNXFp-j8sJZAYpb_QjZzBQw1hZelfv_Pa8Tz3jRmB1dL3NfCdIUALCbXGVkI1rgRCny7Y82mUAjVhDfDKi0MBgJDjL2PicM_H-leyaSQIr4RgNxqgVikWfIs2RCMgtMHM1XeaHZ-_8D_D7WtfErP4Tfo01kSv-GczH2Kjqw8Nz4oZ1nJLwAM3lCw9xgf-Y7Gl2uIrOUxLJI8m7_bDEWYJL8yZOBdLlW6Ah7cKpcpqM6d51Bvx3zXLeG4g";
+												
+													fetch('https://prod.cluster.yourcircle.in/registrations',{
+														method: "POST",
+														headers: {
+															'Content-Type': 'application/json',
+															"device-id": "web",
+															"app-version": "2.6.04",
+															"api-version": "0.0.1",
+															"platform": "android",
+															'Authorization': accessToken,
+														},
+														body: JSON.stringify(data),
+													})
+													.then(function(response){
+														console.log("sendSubscriptionToBackEnd1");
+														if(!response.ok){
+															throw new Error('RECIEVED BAD STATUS CODE FROM SERVER.');
+														}
+														return response.json();
+													})
+													.then(function(responseData){
+														console.log("sendSubscriptionToBackEnd2");
+													});
+												}
+	
+												let variable = cityName ? true : false;
+												console.log('variable for cityName is',variable);
+                                                console.log('subscriptionStatus',localStorage.getItem('subscriptionStatus'));
+				
+												switch( localStorage.getItem('subscriptionStatus') ){
+													case null:  sendSubscriptionToBackEnd();
+																if(variable) localStorage.setItem('subscriptionStatus', 'city');
+																else localStorage.setItem('subscriptionStatus', 'state');
+																break;
+													case 'SET': clearInterval(subscriptionIntervalId);
+																localStorage.removeItem('subscriptionIntervalId');
+																console.log('ALL ALREADY SET');
+																break;
+													
+													case 'city':    clearInterval(subscriptionIntervalId);
+																	localStorage.removeItem('subscriptionIntervalId');
+																	localStorage.setItem('subscriptionStatus','SET');
+																	sendSubscriptionToBackEnd();
+																	break;
+													case 'state':   if(variable) localStorage.setItem('subscriptionStatus', 'city');
+																	break;
+												}
+											}
+										}
+										else
+											localStorage.setItem('subscriptionIntervalId',id);
+									},3000);
+								});
+							}
+						});
+
+					}
+				});         
+			}, function(err) {
+				console.log('[INSTALL FAILED]', err);
+			});
+		});
+	}
+	else
+		console.log('[INSTALL NOT POSSIBLE]');</script></body></html>
